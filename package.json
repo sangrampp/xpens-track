@@ -1,0 +1,19 @@
+{
+  "name": "xpens-track",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sangrampp/xpens-track.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sangrampp/xpens-track/issues"
+  },
+  "homepage": "https://github.com/sangrampp/xpens-track#readme"
+}
