@@ -6,13 +6,13 @@ angular.module('Xpens-Track')
   //
   // Now set up the states
   $stateProvider
-    // .state('home', {
-    //   url: "/",
-    //   templateUrl: "app/view/home.tmpl.html",
-    //   controller: "LoginController",
-    //   controllerAs: "loginCntrl",
-    //   // authenticate: false
-    // })
+    .state('home', {
+      url: "/",
+      templateUrl: "app/view/home.tmpl.html",
+      controller: "LoginController",
+      controllerAs: "loginCntrl",
+      // authenticate: false
+    })
     .state('expenses', {
       url: "/expenses",
       templateUrl: "app/view/expenses.tmpl.html",

@@ -2,12 +2,6 @@ angular.module('Xpens-Track')
 .service("DataService", function(){
   var dataService = this;
 
-  function init(){
-    console.log(dataService.user);
-    console.log(dataService.group);
-    console.log(dataService.expenseObj);
-  }
-
   dataService.user = function(uid, uname, email){
     this.userId = uid,
     this.username = uname,
@@ -33,7 +27,5 @@ angular.module('Xpens-Track')
     expenseTitle: "",
     expenseAmount: 0
   }; 
-
-  init();
 
 });

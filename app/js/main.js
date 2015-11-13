@@ -33282,13 +33282,13 @@ angular.module('Xpens-Track')
   //
   // Now set up the states
   $stateProvider
-    // .state('home', {
-    //   url: "/",
-    //   templateUrl: "app/view/home.tmpl.html",
-    //   controller: "LoginController",
-    //   controllerAs: "loginCntrl",
-    //   // authenticate: false
-    // })
+    .state('home', {
+      url: "/",
+      templateUrl: "app/view/home.tmpl.html",
+      controller: "LoginController",
+      controllerAs: "loginCntrl",
+      // authenticate: false
+    })
     .state('expenses', {
       url: "/expenses",
       templateUrl: "app/view/expenses.tmpl.html",
@@ -33317,12 +33317,6 @@ angular.module('Xpens-Track')
 .service("DataService", function(){
   var dataService = this;
 
-  function init(){
-    console.log(dataService.user);
-    console.log(dataService.group);
-    console.log(dataService.expenseObj);
-  }
-
   dataService.user = function(uid, uname, email){
     this.userId = uid,
     this.username = uname,
@@ -33348,8 +33342,6 @@ angular.module('Xpens-Track')
     expenseTitle: "",
     expenseAmount: 0
   }; 
-
-  init();
 
 });
 angular.module('Xpens-Track')

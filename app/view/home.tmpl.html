@@ -1,0 +1,61 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="jumbotron">
+        <h1>Xpens-Track</h1>
+        <p>Expense tracking amongst friends,buddies,colleagues,family is just so easy now.</p>
+        <p><a class="btn btn-primary btn-lg">Learn more</a></p>
+      </div>
+    </div>
+   <div class="col-sm-5  ">
+    <form class="form-horizontal well" ng-submit="loginCntrl.login()">
+      <fieldset>
+        <legend>Sign In</legend>
+        <div class="form-group">
+          <label for="inputEmail" class="col-lg-2 control-label">Email</label>
+          <div class="col-lg-10">
+            <input type="text" class="form-control" id="inputEmail" placeholder="Email" ng-model="loginCntrl.login_username">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputPassword" class="col-lg-2 control-label">Password</label>
+          <div class="col-lg-10">
+            <input type="password" class="form-control" id="inputPassword" placeholder="Password" ng-model="loginCntrl.login_password">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-lg-10 col-lg-offset-2">
+            <button type="reset" class="btn btn-default">Cancel</button>
+            <button type="submit" class="btn btn-primary">Log In</button>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+    <div class="col-sm-5 col-sm-offset-1">
+      <form class="form-horizontal well" ng-submit="loginCntrl.signup()">
+        <fieldset>
+          <legend>Sign Up</legend>
+          <div class="form-group">
+            <label for="inputEmail" class="col-lg-2 control-label">Email</label>
+            <div class="col-lg-10">
+              <input type="text" class="form-control" id="inputEmail" ng-model="loginCntrl.signup_username" placeholder="Email">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputPassword" class="col-lg-2 control-label">Password</label>
+            <div class="col-lg-10">
+              <input type="password" class="form-control" id="inputPassword" ng-model="loginCntrl.signup_password"  placeholder="Password">
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-lg-10 col-lg-offset-2">
+              <button type="reset" class="btn btn-default">Cancel</button>
+              <button type="submit" class="btn btn-primary">Sign Up</button>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+</div>
