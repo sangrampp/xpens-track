@@ -12,7 +12,7 @@
   <script type="text/javascript" src="app/js/main.js"></script>  
 </head>
 <body>
-  <header>
+  <header ng-controller="LoginController as loginCntrl">
     <nav class="navbar navbar-inverse">
       <div class="container">
         <div class="navbar-header">
@@ -29,7 +29,7 @@
           <ul class="nav navbar-nav navbar-right">
             <li><a ui-sref="user">My Account</a></li>
             <li><a ui-sref="expenses">Expenses</a></li>
-            <!-- <li><a href="#">Link</a></li> -->
+            <li><a ng-click="loginCntrl.logout()">Logout</a></li>
           </ul>
         </div>
       </div>

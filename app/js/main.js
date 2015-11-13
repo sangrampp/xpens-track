@@ -33275,45 +33275,6 @@ angular.module('ui.router.state')
 Parse.initialize("YPVBaH35TO8x3EPbBE9Pvks1JfWBBiIsYdPP4rpI", "c1XN80bwPHgIWXpTsIEsjovkOTpN0R6iR5TnLb1n");
 angular.module("Xpens-Track", ["ui.router"]);
 angular.module('Xpens-Track')
-.config(function($stateProvider, $urlRouterProvider) {
-  //
-  // For any unmatched url, redirect to /state1
-  $urlRouterProvider.otherwise("/user");
-  //
-  // Now set up the states
-  $stateProvider
-    .state('home', {
-      url: "/",
-      templateUrl: "app/view/home.tmpl.html",
-      controller: "LoginController",
-      controllerAs: "loginCntrl",
-      // authenticate: false
-    })
-    .state('expenses', {
-      url: "/expenses",
-      templateUrl: "app/view/expenses.tmpl.html",
-      controller: "ExpenseController",
-      controllerAs: "expenseCntrl",
-      authenticate: true
-    })
-    .state('user', {
-      url: "/user",
-      templateUrl: "app/view/user.tmpl.html",
-      controller: "UserController",
-      controllerAs: "userCntrl",
-      authenticate: true
-    });
-});
-angular.module('Xpens-Track')
-.run(function($rootScope, $state) {
-    $rootScope.$on( "$stateChangeStart", function(event,toState, toParams, fromState, fromParams) {
-      if (false){
-        $state.transitionTo("user");
-        event.preventDefault();
-      }
-    });
-  });
-angular.module('Xpens-Track')
 .service("DataService", function(){
   var dataService = this;
 
@@ -33344,6 +33305,159 @@ angular.module('Xpens-Track')
   }; 
 
 });
+angular.module('Xpens-Track')
+.service("ParseService", function(DataService){
+
+  var ParseService = this;
+
+  ParseService.signupUser = function(username, password, email){
+    var user = new Parse.User();
+    user.set("username", username);
+    user.set("password", password);
+    user.set("email", email);    
+    
+    // other fields can be set just like with Parse.Object    
+
+    user.signUp(null, {
+      success: function(user) {
+        // Hooray! Let them use the app now.
+        console.log("User created successfully: " + user.username);
+      },
+      error: function(user, error) {
+        // Show the error message somewhere and let the user try again.
+        console.log("Error: " + error.code + " " + error.message);
+      }
+    });
+  };
+
+  ParseService.loginUser = function(username, password){
+    
+    Parse.User.logIn(username, password, {
+      success: function(user) {
+        // Do stuff after successful login.    
+        // user.set("friends", [{username:"paddy", email: "paddy@gmail.com"}]);
+        // user.save(null, {
+        //   success: function(){
+        //     console.log("Saved data success.");
+        //   }
+        // })    
+        console.log("User login successfully: " + user.get("username"));
+        $state.go("user");
+      },
+      error: function(user, error) {
+        // The login failed. Check error to see why.
+        console.log("Error loggin in: " + error.message);
+      }
+    });
+  };  
+
+  ParseService.searchUser = function(username){
+    var differedQuery = $q.defer();
+    var query = new Parse.Query(Parse.User);
+    query.equalTo("username", username);    
+    query.find().then(function(data){
+      // debugger;
+      differedQuery.resolve(data);
+    }, function(){
+      differedQuery.resolve(error);
+    });
+    return differedQuery;
+  };
+
+  ParseService.logoutUser = function(){
+    Parse.User.logOut();    
+    $state.go("home");
+  };
+
+  ParseService.userLoggedIn = function(){
+    return !!ParseService.currentUser();
+  };
+
+  ParseService.curretUser = function(){    
+    return Parse.User.current();
+  };
+
+  ParseService.saveObject = function(className, objectData){
+    var ClassName = Parse.Object.extend(className);
+    var obj = new ClassName();
+
+    for (var property in objectData) {
+      if (objectData.hasOwnProperty(property)) {
+          // do stuff
+          console.log(property);
+          obj.set(property, objectData[property]);
+      }
+    }
+    //now save the object
+    obj.save(null, {
+      success: function(obj) {
+        // Execute any logic that should take place after the object is saved.
+        alert('New object created with objectId: ' + obj.id);
+      },
+      error: function(obj, error) {
+        // Execute any logic that should take place if the save fails.
+        // error is a Parse.Error with an error code and message.
+        alert('Failed to create new object, with error code: ' + error.message);
+      }
+    });
+  };
+
+});
+angular.module('Xpens-Track')
+.config(function($stateProvider, $urlRouterProvider) {
+  //
+  // For any unmatched url, redirect to /state1
+  $urlRouterProvider.otherwise("/user");
+  //
+  // Now set up the states
+  $stateProvider
+    .state('home', {
+      url: "/",
+      templateUrl: "app/view/home.tmpl.html",
+      controller: "LoginController",
+      controllerAs: "loginCntrl",
+      authenticate: false
+    })
+    .state('expenses', {
+      url: "/expenses",
+      templateUrl: "app/view/expenses.tmpl.html",
+      controller: "ExpenseController",
+      controllerAs: "expenseCntrl",
+      authenticate: true
+    })
+    .state('user', {
+      url: "/user",
+      templateUrl: "app/view/user.tmpl.html",
+      controller: "UserController",
+      controllerAs: "userCntrl",
+      authenticate: true
+    });
+});
+angular.module('Xpens-Track')
+.run(function($rootScope, $state, ParseService) {
+    $rootScope.$on( "$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
+      if (false){
+        $state.transitionTo("user");
+        event.preventDefault();
+      }
+    });
+  });
+angular.module('Xpens-Track')
+.controller("LoginController", ["ParseService", function(ParseService){
+  var loginCntrl = this;  
+
+  loginCntrl.signup = function(){
+    ParseService.signupUser(loginCntrl.signup_username, loginCntrl.signup_password, loginCntrl.signup_email);
+  };
+
+  loginCntrl.login = function(){
+    ParseService.loginUser(loginCntrl.login_username, loginCntrl.login_password);
+  };
+
+  loginCntrl.logout = function(){
+    ParseService.logoutUser();
+  }
+}]);
 angular.module('Xpens-Track')
 .controller("UserController", ["$q", "DataService", function($q, DataService){
   var userCntrl = this;

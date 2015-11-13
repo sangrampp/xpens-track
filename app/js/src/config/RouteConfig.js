@@ -11,7 +11,7 @@ angular.module('Xpens-Track')
       templateUrl: "app/view/home.tmpl.html",
       controller: "LoginController",
       controllerAs: "loginCntrl",
-      // authenticate: false
+      authenticate: false
     })
     .state('expenses', {
       url: "/expenses",

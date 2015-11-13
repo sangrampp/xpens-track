@@ -1,7 +1,7 @@
 angular.module('Xpens-Track')
 .service("ParseService", function(DataService){
-  
-  var parseService = this;
+
+  var ParseService = this;
 
   ParseService.signupUser = function(username, password, email){
     var user = new Parse.User();
@@ -62,6 +62,10 @@ angular.module('Xpens-Track')
     $state.go("home");
   };
 
+  ParseService.userLoggedIn = function(){
+    return !!ParseService.currentUser();
+  };
+
   ParseService.curretUser = function(){    
     return Parse.User.current();
   };
@@ -90,7 +94,5 @@ angular.module('Xpens-Track')
       }
     });
   };
-
-
 
 });
