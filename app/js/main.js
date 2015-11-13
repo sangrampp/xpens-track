@@ -33272,3 +33272,155 @@ angular.module('ui.router.state')
   .filter('isState', $IsStateFilter)
   .filter('includedByState', $IncludedByStateFilter);
 })(window, window.angular);
+Parse.initialize("YPVBaH35TO8x3EPbBE9Pvks1JfWBBiIsYdPP4rpI", "c1XN80bwPHgIWXpTsIEsjovkOTpN0R6iR5TnLb1n");
+angular.module("Xpens-Track", ["ui.router"]);
+angular.module('Xpens-Track')
+.config(function($stateProvider, $urlRouterProvider) {
+  //
+  // For any unmatched url, redirect to /state1
+  $urlRouterProvider.otherwise("/user");
+  //
+  // Now set up the states
+  $stateProvider
+    // .state('home', {
+    //   url: "/",
+    //   templateUrl: "app/view/home.tmpl.html",
+    //   controller: "LoginController",
+    //   controllerAs: "loginCntrl",
+    //   // authenticate: false
+    // })
+    .state('expenses', {
+      url: "/expenses",
+      templateUrl: "app/view/expenses.tmpl.html",
+      controller: "ExpenseController",
+      controllerAs: "expenseCntrl",
+      authenticate: true
+    })
+    .state('user', {
+      url: "/user",
+      templateUrl: "app/view/user.tmpl.html",
+      controller: "UserController",
+      controllerAs: "userCntrl",
+      authenticate: true
+    });
+});
+angular.module('Xpens-Track')
+.run(function($rootScope, $state) {
+    $rootScope.$on( "$stateChangeStart", function(event,toState, toParams, fromState, fromParams) {
+      if (false){
+        $state.transitionTo("user");
+        event.preventDefault();
+      }
+    });
+  });
+angular.module('Xpens-Track')
+.service("DataService", function(){
+  var dataService = this;
+
+  function init(){
+    console.log(dataService.user);
+    console.log(dataService.group);
+    console.log(dataService.expenseObj);
+  }
+
+  dataService.user = function(uid, uname, email){
+    this.userId = uid,
+    this.username = uname,
+    this.email = email,
+    this.share
+  };
+
+  var u = new dataService.user("xyz001", "sangrampp", "sangram@gmail.com");
+  
+  var friends = [
+    new dataService.user("pqr003", "sundar", "sundar@gmail.com"),
+    new dataService.user("abc002", "paddy", "paddy@gmail.com")
+  ];
+
+  dataService.group = {
+    u,
+    friends
+  };  
+
+  dataService.expenseObj = {
+    u,
+    expenseUsers: [],
+    expenseTitle: "",
+    expenseAmount: 0
+  }; 
+
+  init();
+
+});
+angular.module('Xpens-Track')
+.controller("UserController", ["$q", "DataService", function($q, DataService){
+  var userCntrl = this;
+
+  userCntrl.searchClicked = false;
+  
+  userCntrl.searchFriend = function(){
+    userCntrl.searchClicked = true;    
+    userCntrl.searchUser = new DataService.user("tempxyz11", userCntrl.searchName, userCntrl.searchName + "@gmail.com");
+  };
+
+  userCntrl.addFriend = function(user){    
+    DataService.group.friends.push(user);
+  };
+
+  userCntrl.friends = function(){    
+    return DataService.group.friends;
+  };
+
+}]);
+angular.module('Xpens-Track')
+.controller("ExpenseController", ["$q", "DataService", function($q, DataService){
+  var expenseCntrl = this;
+
+  function init(){
+    DataService.group.u.share = 0;
+    DataService.expenseObj.expenseUsers = [];
+    DataService.expenseObj.expenseUsers.push(DataService.group.u);
+  };
+
+  expenseCntrl.friends = function(){    
+    return DataService.group.friends;
+  };
+
+  expenseCntrl.users = function(){
+    return DataService.expenseObj.expenseUsers;
+  };
+
+  expenseCntrl.addExpenseUser = function(user){
+    DataService.expenseObj.expenseUsers.push(user);
+  };
+
+  expenseCntrl.addUserPaid = function(user){
+    expenseCntrl.userPaid = user;
+  };
+
+  expenseCntrl.getUserShare = function(){
+    console.log(DataService.user);
+    return DataService.group.u.share;
+  };
+
+  function calculateShare(){
+    var sharePerUser = expenseCntrl.expenseAmount/expenseCntrl.users().length;
+    console.log(sharePerUser);
+    expenseCntrl.users().forEach(function(user){
+      if(user === expenseCntrl.userPaid){
+        user.share = expenseCntrl.expenseAmount - sharePerUser;
+      } else{
+        user.share = -sharePerUser;
+      };
+      console.log(user);
+    });
+  };
+
+  expenseCntrl.addExpense = function(){
+    calculateShare();
+    console.log(expenseCntrl.getUserShare());
+  };
+
+  init();
+
+}]);

@@ -1,0 +1,15 @@
+.panel-body{
+  padding: 0;
+}
+
+.friend-list-item{
+  padding: 0 15px;  
+}
+
+.list-group-item{
+  padding-right: 0;
+}
+
+.vcenter{
+  transform:translateY(-25%);
+}

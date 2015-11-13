@@ -1,0 +1,53 @@
+<div class="container">
+  <form class="form-group" ng-submit="expenseCntrl.addExpense()">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="input-group">
+            <span class="input-group-addon">Expense Title</span>
+            <input type="text" class="form-control" ng-model="expenseCntrl.expenseTitle">          
+        </div>
+        <div class="panel panel-success">
+          <div class="panel-heading">
+            <h3 class="panel-title">Friends in your list</h3>
+          </div>
+          <div class="panel-body list-group"> 
+            <a class="list-group-item" ng-repeat="friend in expenseCntrl.friends()" ng-click="expenseCntrl.addExpenseUser(friend)">{{friend.username}}</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="input-group">
+            <span class="input-group-addon">Amount</span>
+            <input type="text" class="form-control" ng-model="expenseCntrl.expenseAmount">          
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon">Who Paid</span>
+            <input type="text" class="form-control" ng-model="expenseCntrl.userPaid.username" ng-disabled="true">         
+        </div>
+        <div class="panel panel-success">
+          <div class="panel-heading">
+            <h3 class="panel-title">Friends Sharing Expense</h3>
+          </div>
+          <div class="panel-body list-group"> 
+            <a class="list-group-item" ng-repeat="user in expenseCntrl.users()" ng-click="expenseCntrl.addUserPaid(user)">{{user.username}}</a>
+          </div>          
+        </div>        
+      </div>
+    </div>
+    <span class="input-group-btn">
+      <button class="btn btn-default" type="submit">Add Expense</button>
+    </span>
+  </form>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="well">
+        Amount Due: {{ expenseCntrl.getUserShare() }}
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="well">
+        Pay to: {{ expenseCntrl.userPaid.username }}
+      </div>
+    </div>
+  </div>
+</div>

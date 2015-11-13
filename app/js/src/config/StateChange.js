@@ -1,8 +1,8 @@
 angular.module('Xpens-Track')
-.run(function($rootScope, $state, ParseService) {
+.run(function($rootScope, $state) {
     $rootScope.$on( "$stateChangeStart", function(event,toState, toParams, fromState, fromParams) {
-      if (toState.authenticate && !ParseService.loggedIn()){
-        $state.transitionTo("home");
+      if (false){
+        $state.transitionTo("user");
         event.preventDefault();
       }
     });

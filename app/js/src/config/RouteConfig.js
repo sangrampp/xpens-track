@@ -2,7 +2,7 @@ angular.module('Xpens-Track')
 .config(function($stateProvider, $urlRouterProvider) {
   //
   // For any unmatched url, redirect to /state1
-  $urlRouterProvider.otherwise("/");
+  $urlRouterProvider.otherwise("/user");
   //
   // Now set up the states
   $stateProvider
@@ -18,13 +18,13 @@ angular.module('Xpens-Track')
       templateUrl: "app/view/expenses.tmpl.html",
       controller: "ExpenseController",
       controllerAs: "expenseCntrl",
-      // authenticate: true
+      authenticate: true
     })
     .state('user', {
       url: "/user",
       templateUrl: "app/view/user.tmpl.html",
       controller: "UserController",
       controllerAs: "userCntrl",
-      // authenticate: true
+      authenticate: true
     });
 });
