@@ -11,7 +11,7 @@
             <h3 class="panel-title">Friends in your list</h3>
           </div>
           <div class="panel-body list-group"> 
-            <a class="list-group-item" ng-repeat="friend in expenseCntrl.friends()" ng-click="expenseCntrl.addExpenseUser(friend)">{{friend.username}}</a>
+            <a class="list-group-item" ng-repeat="friend in expenseCntrl.friends()" ng-click="expenseCntrl.addExpenseUser(friend)">{{ expenseCntrl.getUserName(friend) }}</a>
           </div>
         </div>
       </div>
@@ -22,14 +22,14 @@
         </div>
         <div class="input-group">
             <span class="input-group-addon">Who Paid</span>
-            <input type="text" class="form-control" ng-model="expenseCntrl.userPaid.username" ng-disabled="true">         
+            <span class="form-control">{{ expenseCntrl.userPaidName() }}</span>      
         </div>
         <div class="panel panel-success">
           <div class="panel-heading">
             <h3 class="panel-title">Friends Sharing Expense</h3>
           </div>
           <div class="panel-body list-group"> 
-            <a class="list-group-item" ng-repeat="user in expenseCntrl.users()" ng-click="expenseCntrl.addUserPaid(user)">{{user.username}}</a>
+            <a class="list-group-item" ng-repeat="user in expenseCntrl.users()" ng-click="expenseCntrl.addUserPaid(user)">{{ expenseCntrl.getUserName(user) }}</a>
           </div>          
         </div>        
       </div>
@@ -40,13 +40,13 @@
   </form>
   <div class="row">
     <div class="col-md-6">
-      <div class="well">
-        Amount Due: {{ expenseCntrl.getUserShare() }}
+      <div class="well" ng-cloak>
+        {{ expenseCntrl.getUserShare() }}
       </div>
     </div>
     <div class="col-md-6">
-      <div class="well">
-        Pay to: {{ expenseCntrl.userPaid.username }}
+      <div class="well" ng-cloak>
+        Pay to: {{ expenseCntrl.userPaid.get('username') }}
       </div>
     </div>
   </div>

@@ -13,7 +13,7 @@
       </form>
       <div class="list-group">  
         <div class="list-group-item" ng-show="userCntrl.searchClicked">
-            <span class="friend-list-item">{{userCntrl.searchUser.username}}</span>
+            <span class="friend-list-item">{{ userCntrl.searchUser.get("username") }}</span>
             <button class="btn btn-success vcenter pull-right" ng-click="userCntrl.addFriend(userCntrl.searchUser)">Add Friend</button>
         </div> 
       </div>
@@ -24,7 +24,7 @@
           <h3 class="panel-title">Friends in your list</h3>
         </div>
         <div class="panel-body list-group"> 
-          <a class="list-group-item" ng-repeat="friend in userCntrl.friends()">{{friend.username}}</a>
+          <a class="list-group-item" ng-repeat="friend in userCntrl.friends()">{{ userCntrl.getFriendName(friend) }}</a>
         </div>
       </div>
     </div>

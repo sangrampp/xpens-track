@@ -1,12 +1,25 @@
 angular.module('Xpens-Track')
-.controller("UserController", ["$q", "DataService", function($q, DataService){
+.controller("UserController", ["$q", "DataService", "ParseService", function($q, DataService, ParseService){
   var userCntrl = this;
 
   userCntrl.searchClicked = false;
   
-  userCntrl.searchFriend = function(){
-    userCntrl.searchClicked = true;    
-    userCntrl.searchUser = new DataService.user("tempxyz11", userCntrl.searchName, userCntrl.searchName + "@gmail.com");
+  userCntrl.searchFriend = function(){     
+    ParseService.searchUser(userCntrl.searchName).promise.then(function(data){
+      // debugger;
+      userCntrl.searchUser = data;
+      userCntrl.searchClicked = true;   
+      // console.log(userCntrl.searchUser);
+    });
+  };
+
+  userCntrl.getUserName = function(){
+    // return userCntrl.searchUser.get("username");
+    return "Dummy";
+  };
+
+  userCntrl.getFriendName = function(friend){
+    return friend.get("username");
   };
 
   userCntrl.addFriend = function(user){    

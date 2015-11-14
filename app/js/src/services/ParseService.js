@@ -1,7 +1,42 @@
 angular.module('Xpens-Track')
-.service("ParseService", function(DataService){
+.service("ParseService", function(DataService, $q, $state){
 
   var ParseService = this;
+
+  function getGroup(userId){
+    var Group = Parse.Object.extend("Group");
+    var query = new Parse.Query(Group);
+    query.equalTo("user", userId);
+    var defferedQuery = $q.defer();
+    query.first().then(function(data){      
+      defferedQuery.resolve(data);
+    });
+
+    defferedQuery.promise.then(function(result){      
+      DataService.group.friends = result.get("friends");
+    })
+  };
+
+  function createGroup(userId){
+    var Group = Parse.Object.extend("Group");
+    var group = new Group();
+
+    group.set("user", userId);
+    group.set("friends", []);
+    
+    group.save(null, {
+      success: function(group) {
+        // Execute any logic that should take place after the object is saved.
+        console.log('New object created with objectId: ' + group.id);        
+        DataService.group.friends = group.get("friends");
+      },
+      error: function(group, error) {
+        // Execute any logic that should take place if the save fails.
+        // error is a Parse.Error with an error code and message.
+        console.log('Failed to create new object, with error code: ' + error.message);
+      }
+    });
+  };
 
   ParseService.signupUser = function(username, password, email){
     var user = new Parse.User();
@@ -13,8 +48,12 @@ angular.module('Xpens-Track')
 
     user.signUp(null, {
       success: function(user) {
+        DataService.group.user = user;
+        debugger;
+        createGroup(user.id);
         // Hooray! Let them use the app now.
         console.log("User created successfully: " + user.username);
+        $state.go("user");
       },
       error: function(user, error) {
         // Show the error message somewhere and let the user try again.
@@ -34,6 +73,8 @@ angular.module('Xpens-Track')
         //     console.log("Saved data success.");
         //   }
         // })    
+        DataService.group.user = user;
+        getGroup(user.id);
         console.log("User login successfully: " + user.get("username"));
         $state.go("user");
       },
@@ -48,7 +89,7 @@ angular.module('Xpens-Track')
     var differedQuery = $q.defer();
     var query = new Parse.Query(Parse.User);
     query.equalTo("username", username);    
-    query.find().then(function(data){
+    query.first().then(function(data){
       // debugger;
       differedQuery.resolve(data);
     }, function(){

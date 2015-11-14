@@ -3,9 +3,13 @@ angular.module('Xpens-Track')
   var expenseCntrl = this;
 
   function init(){
-    DataService.group.u.share = 0;
+    DataService.group.user.share = 0;
     DataService.expenseObj.expenseUsers = [];
-    DataService.expenseObj.expenseUsers.push(DataService.group.u);
+    DataService.expenseObj.expenseUsers.push(DataService.group.user);
+  };
+
+  expenseCntrl.getUserName = function(user){
+    return user.get("username");
   };
 
   expenseCntrl.friends = function(){    
@@ -26,8 +30,14 @@ angular.module('Xpens-Track')
 
   expenseCntrl.getUserShare = function(){
     console.log(DataService.user);
-    return DataService.group.u.share;
+    return DataService.group.user.share;
   };
+
+  expenseCntrl.userPaidName = function(){
+    if(expenseCntrl.userPaid !== undefined){
+      return expenseCntrl.userPaid.get("username");
+    }    
+  }
 
   function calculateShare(){
     var sharePerUser = expenseCntrl.expenseAmount/expenseCntrl.users().length;

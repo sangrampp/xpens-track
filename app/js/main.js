@@ -33278,27 +33278,16 @@ angular.module('Xpens-Track')
 .service("DataService", function(){
   var dataService = this;
 
-  dataService.user = function(uid, uname, email){
-    this.userId = uid,
-    this.username = uname,
-    this.email = email,
-    this.share
-  };
-
-  var u = new dataService.user("xyz001", "sangrampp", "sangram@gmail.com");
-  
-  var friends = [
-    new dataService.user("pqr003", "sundar", "sundar@gmail.com"),
-    new dataService.user("abc002", "paddy", "paddy@gmail.com")
-  ];
+  var user = {};
+  var friends = [];  
 
   dataService.group = {
-    u,
+    user,
     friends
   };  
 
   dataService.expenseObj = {
-    u,
+    user,
     expenseUsers: [],
     expenseTitle: "",
     expenseAmount: 0
@@ -33306,9 +33295,44 @@ angular.module('Xpens-Track')
 
 });
 angular.module('Xpens-Track')
-.service("ParseService", function(DataService){
+.service("ParseService", function(DataService, $q, $state){
 
   var ParseService = this;
+
+  function getGroup(userId){
+    var Group = Parse.Object.extend("Group");
+    var query = new Parse.Query(Group);
+    query.equalTo("user", userId);
+    var defferedQuery = $q.defer();
+    query.first().then(function(data){      
+      defferedQuery.resolve(data);
+    });
+
+    defferedQuery.promise.then(function(result){      
+      DataService.group.friends = result.get("friends");
+    })
+  };
+
+  function createGroup(userId){
+    var Group = Parse.Object.extend("Group");
+    var group = new Group();
+
+    group.set("user", userId);
+    group.set("friends", []);
+    
+    group.save(null, {
+      success: function(group) {
+        // Execute any logic that should take place after the object is saved.
+        console.log('New object created with objectId: ' + group.id);        
+        DataService.group.friends = group.get("friends");
+      },
+      error: function(group, error) {
+        // Execute any logic that should take place if the save fails.
+        // error is a Parse.Error with an error code and message.
+        console.log('Failed to create new object, with error code: ' + error.message);
+      }
+    });
+  };
 
   ParseService.signupUser = function(username, password, email){
     var user = new Parse.User();
@@ -33320,8 +33344,12 @@ angular.module('Xpens-Track')
 
     user.signUp(null, {
       success: function(user) {
+        DataService.group.user = user;
+        debugger;
+        createGroup(user.id);
         // Hooray! Let them use the app now.
         console.log("User created successfully: " + user.username);
+        $state.go("user");
       },
       error: function(user, error) {
         // Show the error message somewhere and let the user try again.
@@ -33341,6 +33369,8 @@ angular.module('Xpens-Track')
         //     console.log("Saved data success.");
         //   }
         // })    
+        DataService.group.user = user;
+        getGroup(user.id);
         console.log("User login successfully: " + user.get("username"));
         $state.go("user");
       },
@@ -33355,7 +33385,7 @@ angular.module('Xpens-Track')
     var differedQuery = $q.defer();
     var query = new Parse.Query(Parse.User);
     query.equalTo("username", username);    
-    query.find().then(function(data){
+    query.first().then(function(data){
       // debugger;
       differedQuery.resolve(data);
     }, function(){
@@ -33436,8 +33466,8 @@ angular.module('Xpens-Track')
 angular.module('Xpens-Track')
 .run(function($rootScope, $state, ParseService) {
     $rootScope.$on( "$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
-      if (false){
-        $state.transitionTo("user");
+      if (toState.authenticate && !ParseService.userLoggedIn){
+        $state.transitionTo("home");
         event.preventDefault();
       }
     });
@@ -33459,14 +33489,27 @@ angular.module('Xpens-Track')
   }
 }]);
 angular.module('Xpens-Track')
-.controller("UserController", ["$q", "DataService", function($q, DataService){
+.controller("UserController", ["$q", "DataService", "ParseService", function($q, DataService, ParseService){
   var userCntrl = this;
 
   userCntrl.searchClicked = false;
   
-  userCntrl.searchFriend = function(){
-    userCntrl.searchClicked = true;    
-    userCntrl.searchUser = new DataService.user("tempxyz11", userCntrl.searchName, userCntrl.searchName + "@gmail.com");
+  userCntrl.searchFriend = function(){     
+    ParseService.searchUser(userCntrl.searchName).promise.then(function(data){
+      // debugger;
+      userCntrl.searchUser = data;
+      userCntrl.searchClicked = true;   
+      // console.log(userCntrl.searchUser);
+    });
+  };
+
+  userCntrl.getUserName = function(){
+    // return userCntrl.searchUser.get("username");
+    return "Dummy";
+  };
+
+  userCntrl.getFriendName = function(friend){
+    return friend.get("username");
   };
 
   userCntrl.addFriend = function(user){    
@@ -33483,9 +33526,13 @@ angular.module('Xpens-Track')
   var expenseCntrl = this;
 
   function init(){
-    DataService.group.u.share = 0;
+    DataService.group.user.share = 0;
     DataService.expenseObj.expenseUsers = [];
-    DataService.expenseObj.expenseUsers.push(DataService.group.u);
+    DataService.expenseObj.expenseUsers.push(DataService.group.user);
+  };
+
+  expenseCntrl.getUserName = function(user){
+    return user.get("username");
   };
 
   expenseCntrl.friends = function(){    
@@ -33506,8 +33553,14 @@ angular.module('Xpens-Track')
 
   expenseCntrl.getUserShare = function(){
     console.log(DataService.user);
-    return DataService.group.u.share;
+    return DataService.group.user.share;
   };
+
+  expenseCntrl.userPaidName = function(){
+    if(expenseCntrl.userPaid !== undefined){
+      return expenseCntrl.userPaid.get("username");
+    }    
+  }
 
   function calculateShare(){
     var sharePerUser = expenseCntrl.expenseAmount/expenseCntrl.users().length;
